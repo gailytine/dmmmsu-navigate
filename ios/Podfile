@@ -2,6 +2,21 @@
 platform :ios, '13.0'  # Required for cloud_firestore
 use_frameworks!  # Needed for some Firebase plugins
 
+# Add this line to load Flutter's Pod helper
+flutter_application_path = '../.flutter'
+load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
+
 target 'Runner' do
-  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  # Install Flutter pods
+  install_all_flutter_pods(flutter_application_path)
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      # Workaround for Xcode 14.3+
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+    end
+  end
 end
