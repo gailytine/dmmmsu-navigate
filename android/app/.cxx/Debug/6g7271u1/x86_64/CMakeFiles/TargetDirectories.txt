@@ -1,0 +1,2 @@
+D:/dmmmsu_navigate/android/app/.cxx/Debug/6g7271u1/x86_64/CMakeFiles/edit_cache.dir
+D:/dmmmsu_navigate/android/app/.cxx/Debug/6g7271u1/x86_64/CMakeFiles/rebuild_cache.dir

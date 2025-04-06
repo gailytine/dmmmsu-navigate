@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "campus_boundaries",
+"features": [
+{ "type": "Feature", "properties": { }, "geometry": null },
+{ "type": "Feature", "properties": { }, "geometry": null },
+{ "type": "Feature", "properties": { }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 120.37639310470945, 16.328064232470481 ], [ 120.368153468864193, 16.328064232470481 ], [ 120.368153468864193, 16.323125383635102 ], [ 120.37639310470945, 16.323125383635102 ], [ 120.37639310470945, 16.328064232470481 ] ] ] } }
+]
+}

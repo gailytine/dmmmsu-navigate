@@ -1,0 +1,19 @@
+{
+"type": "FeatureCollection",
+"name": "venues_centroid",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"xy_coordinate_resolution": 1e-17,
+"features": [
+{ "type": "Feature", "properties": { "id": 105, "name": "Multi Commodity Solar", "icon_type": "RE" }, "geometry": { "type": "Point", "coordinates": [ 120.41451108153783878, 16.23823091240349115 ] } },
+{ "type": "Feature", "properties": { "id": 85, "name": "Playing Court", "icon_type": "BB" }, "geometry": { "type": "Point", "coordinates": [ 120.41482979970847111, 16.23850697420799705 ] } },
+{ "type": "Feature", "properties": { "id": 89, "name": null, "icon_type": "RE" }, "geometry": { "type": "Point", "coordinates": [ 120.41457282928523398, 16.23904712004548401 ] } },
+{ "type": "Feature", "properties": { "id": 90, "name": null, "icon_type": "RE" }, "geometry": { "type": "Point", "coordinates": [ 120.41536463499478771, 16.23915640657833137 ] } },
+{ "type": "Feature", "properties": { "id": 88, "name": null, "icon_type": "RE" }, "geometry": { "type": "Point", "coordinates": [ 120.41415961834970005, 16.23845936704811521 ] } },
+{ "type": "Feature", "properties": { "id": 87, "name": null, "icon_type": "RE" }, "geometry": { "type": "Point", "coordinates": [ 120.41408227773685269, 16.23812881135599895 ] } },
+{ "type": "Feature", "properties": { "id": 107, "name": "Water Impounding - 1", "icon_type": "WATER" }, "geometry": { "type": "Point", "coordinates": [ 120.41485069414817133, 16.23794916129035926 ] } },
+{ "type": "Feature", "properties": { "id": 91, "name": null, "icon_type": "RE" }, "geometry": { "type": "Point", "coordinates": [ 120.41346604769265127, 16.23914323231457857 ] } },
+{ "type": "Feature", "properties": { "id": 86, "name": null, "icon_type": "RE" }, "geometry": { "type": "Point", "coordinates": [ 120.41507733644806422, 16.23870088344074603 ] } },
+{ "type": "Feature", "properties": { "id": 98, "name": "Water Impounding - 3", "icon_type": "WATER" }, "geometry": { "type": "Point", "coordinates": [ 120.4140423600012042, 16.23832451745952454 ] } },
+{ "type": "Feature", "properties": { "id": 117, "name": "Water Impounding - 2", "icon_type": "WATER" }, "geometry": { "type": "Point", "coordinates": [ 120.41553272608479119, 16.23857108666221549 ] } }
+]
+}

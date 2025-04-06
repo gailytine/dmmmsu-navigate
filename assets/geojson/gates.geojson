@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "gates",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4979" } },
+"features": [
+{ "type": "Feature", "id": "0D5F8BCEF63685A3DA9E", "properties": { "name": "Main Gate", "styleUrl": "#__managed_style_03B1D50E243685A3DAA7", "fill-opacity": 0.25098039215686274, "fill": "#ffffff", "stroke-opacity": 1, "stroke": "#fbc02d", "stroke-width": 2.66667, "icon-offset": [ 64, 128 ], "icon-offset-units": [ "pixels", "insetPixels" ], "icon": "https://earth.google.com/earth/document/icon?color=1976d2&id=2000&scale=4" }, "geometry": { "type": "Point", "coordinates": [ 120.372565411791712, 16.324417990507214, 0.0 ] } },
+{ "type": "Feature", "id": "01BAD4FC8B3685A4AB8C", "properties": { "name": "Gate 3", "styleUrl": "#__managed_style_03B1D50E243685A3DAA7", "fill-opacity": 0.25098039215686274, "fill": "#ffffff", "stroke-opacity": 1, "stroke": "#fbc02d", "stroke-width": 2.66667, "icon-offset": [ 64, 128 ], "icon-offset-units": [ "pixels", "insetPixels" ], "icon": "https://earth.google.com/earth/document/icon?color=1976d2&id=2000&scale=4" }, "geometry": { "type": "Point", "coordinates": [ 120.370157288585517, 16.325767397163393, 18.894958198992409 ] } }
+]
+}

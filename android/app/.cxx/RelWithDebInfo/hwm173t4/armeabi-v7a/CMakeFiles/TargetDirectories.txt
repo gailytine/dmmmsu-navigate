@@ -1,0 +1,2 @@
+D:/dmmmsu_navigate/android/app/.cxx/RelWithDebInfo/hwm173t4/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/dmmmsu_navigate/android/app/.cxx/RelWithDebInfo/hwm173t4/armeabi-v7a/CMakeFiles/rebuild_cache.dir

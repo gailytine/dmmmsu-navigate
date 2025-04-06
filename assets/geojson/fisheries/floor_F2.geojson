@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "floor_F2",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"xy_coordinate_resolution": 1e-17,
+"features": [
+{ "type": "Feature", "properties": { "id": 77 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 120.38390843764419458, 16.26725204295664895 ], [ 120.3840364464548145, 16.26743786410818871 ], [ 120.38418042691914422, 16.2673468946916735 ], [ 120.38404390773381181, 16.26716532386473446 ], [ 120.38390843764419458, 16.26725204295664895 ] ] ] } }
+]
+}

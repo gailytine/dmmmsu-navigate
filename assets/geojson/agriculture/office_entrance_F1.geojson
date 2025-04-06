@@ -1,0 +1,14 @@
+{
+"type": "FeatureCollection",
+"name": "office_entrances",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"xy_coordinate_resolution": 1e-17,
+"features": [
+{ "type": "Feature", "properties": { "id": null, "office_id": 93 }, "geometry": { "type": "Point", "coordinates": [ 120.41403288883751088, 16.23897474195984003 ] } },
+{ "type": "Feature", "properties": { "id": null, "office_id": 89 }, "geometry": { "type": "Point", "coordinates": [ 120.41408569618943147, 16.23893611277972582 ] } },
+{ "type": "Feature", "properties": { "id": null, "office_id": 90 }, "geometry": { "type": "Point", "coordinates": [ 120.41424646412008315, 16.23882057983700378 ] } },
+{ "type": "Feature", "properties": { "id": null, "office_id": 91 }, "geometry": { "type": "Point", "coordinates": [ 120.41420594206128669, 16.23877128828464578 ] } },
+{ "type": "Feature", "properties": { "id": null, "office_id": 92 }, "geometry": { "type": "Point", "coordinates": [ 120.41470550582477017, 16.23838972454088747 ] } },
+{ "type": "Feature", "properties": { "id": null, "office_id": 88 }, "geometry": { "type": "Point", "coordinates": [ 120.41466422951026516, 16.2384309840438732 ] } }
+]
+}

@@ -1,0 +1,13 @@
+{
+"type": "FeatureCollection",
+"name": "building_entrance",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"xy_coordinate_resolution": 1e-17,
+"features": [
+{ "type": "Feature", "properties": { "id": 77 }, "geometry": { "type": "Point", "coordinates": [ 120.38396936634421763, 16.26720574139693554 ] } },
+{ "type": "Feature", "properties": { "id": 77 }, "geometry": { "type": "Point", "coordinates": [ 120.38410777441411881, 16.26724164933206396 ] } },
+{ "type": "Feature", "properties": { "id": 77 }, "geometry": { "type": "Point", "coordinates": [ 120.38410771282657663, 16.26739920428291697 ] } },
+{ "type": "Feature", "properties": { "id": 81 }, "geometry": { "type": "Point", "coordinates": [ 120.38402223357088872, 16.26659268536444358 ] } },
+{ "type": "Feature", "properties": { "id": 81 }, "geometry": { "type": "Point", "coordinates": [ 120.3839713410439316, 16.26640724250439263 ] } }
+]
+}

@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "lib_office",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"xy_coordinate_resolution": 1e-17,
+"features": [
+{ "type": "Feature", "properties": { "id": null, "name": null, "styleUrl": null, "fill-opacity": null, "fill": null, "stroke-opacity": null, "stroke": null, "stroke-width": null, "icon-offset": null, "icon-offset-units": [ ], "icon": null }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 120.41416525208762778, 16.23832551309725503, 0.0 ], [ 120.41424373903721801, 16.23839253275368222, 0.0 ], [ 120.41433434719145623, 16.23829943154993671, 0.0 ], [ 120.41425379705810883, 16.23823241186180866, 0.0 ], [ 120.41416525208762778, 16.23832551309725503, 0.0 ] ] ] } }
+]
+}

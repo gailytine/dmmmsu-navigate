@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "office_F1",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4979" } },
+"xy_coordinate_resolution": 1e-17,
+"z_coordinate_resolution": 1e-17,
+"features": [
+{ "type": "Feature", "properties": { "id": "59", "name": "Faculty Office", "styleUrl": "#__managed_style_0A2FE63D5F36BF84B422", "fill-opacity": 0.25098039215686274, "fill": "#ffffff", "stroke-opacity": 1, "stroke": "#d32f2f", "stroke-width": 2.66667, "icon-offset": [ 64, 128 ], "icon-offset-units": [ "pixels", "insetPixels" ], "icon": "https://earth.google.com/earth/document/icon?color=1976d2&id=2000&scale=4" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 120.38396751165130638, 16.26721969963582026 ], [ 120.38400788890669446, 16.26727585779390139 ], [ 120.38395456781999826, 16.26731116719012959 ], [ 120.38391435931609408, 16.26725286495955913 ], [ 120.38396751165130638, 16.26721969963582026 ] ] ] } },
+{ "type": "Feature", "properties": { "id": "58", "name": "SBO Adviser Office", "styleUrl": "#__managed_style_0A2FE63D5F36BF84B422", "fill-opacity": 0.25098039215686274, "fill": "#ffffff", "stroke-opacity": 1, "stroke": "#d32f2f", "stroke-width": 2.66667, "icon-offset": [ 64, 128 ], "icon-offset-units": [ "pixels", "insetPixels" ], "icon": "https://earth.google.com/earth/document/icon?color=1976d2&id=2000&scale=4" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ 120.38408130549609609, 16.26654506612723949 ], [ 120.38404880692489485, 16.26649952252011033 ], [ 120.3840725862818033, 16.26648489980849988 ], [ 120.3841033549140036, 16.26653082259367977 ], [ 120.38408130549609609, 16.26654506612723949 ] ] ] } }
+]
+}
