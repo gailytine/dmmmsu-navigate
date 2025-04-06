@@ -1,0 +1,13 @@
+workflows:
+  ios-workflow:
+    name: iOS Build
+    environment:
+      vars:
+        XCODE_WORKSPACE: "ios/Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+    scripts:
+      - flutter pub get
+      - cd ios && pod install --repo-update && cd ..
+      - flutter build ios --release --no-codesign
+    artifacts:
+      - build/ios/ipa/*.ipa
