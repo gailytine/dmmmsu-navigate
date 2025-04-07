@@ -2,14 +2,14 @@ workflows:
   ios-sideloadly-workflow:
     name: iOS Build for Sideloadly
     environment:
-      flutter: "3.29.2"  # Your Flutter version
-      xcode: latest       # Latest Xcode (recommended)
-      cocoapods: default  # Default CocoaPods version
+      flutter: "3.29.2"
+      xcode: latest
+      cocoapods: default
       groups:
-        - ios             # Required for iOS builds
-    instance_type: mac_mini_m1  # Faster builds on M1 Macs
+        - ios
+    instance_type: mac_mini_m1
     triggering:
-      events: [push]      # Run on every push (adjust as needed)
+      events: [push]
 
     scripts:
       # 1. Flutter Setup
@@ -19,7 +19,7 @@ workflows:
           flutter pub get
           flutter precache --ios
 
-      # 2. CocoaPods Setup (iOS Dependencies)
+      # 2. CocoaPods Setup
       - name: Install Pods
         script: |
           cd ios
@@ -27,12 +27,16 @@ workflows:
           pod install --verbose
           cd ..
 
-      # 3. Automatic Code Signing (for development profile)
-      - name: Set Up Automatic Signing
+      # 3. Code Signing Configuration
+      - name: Configure Code Signing
         script: |
           cd ios
+          # Create exportOptions.plist if it doesn't exist
+          if [ ! -f exportOptions.plist ]; then
+            /usr/libexec/PlistBuddy -c "Add :method string development" exportOptions.plist
+          fi
           /usr/libexec/PlistBuddy -c "Set :method development" exportOptions.plist
-          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" exportOptions.plist
+          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" exportOptions.plist 2>/dev/null || true
           /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" exportOptions.plist
           /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$PRODUCT_BUNDLE_IDENTIFIER string $BUNDLE_ID" exportOptions.plist
           cd ..
@@ -40,11 +44,17 @@ workflows:
       # 4. Build & Export IPA
       - name: Build iOS IPA
         script: |
-          flutter build ios --release --no-codesign  # Build without signing (Xcode will handle it)
+          flutter build ios --release --no-codesign
           cd ios
-          xcodebuild -workspace Runner.xcworkspace -scheme Runner -archivePath RunnerArchive.xcarchive archive
-          xcodebuild -exportArchive -archivePath RunnerArchive.xcarchive -exportPath ./build -exportOptionsPlist exportOptions.plist
+          # Create build directory if it doesn't exist
+          mkdir -p build
+          # Archive and export
+          xcodebuild -workspace Runner.xcworkspace -scheme Runner -archivePath build/Runner.xcarchive archive
+          xcodebuild -exportArchive \
+            -archivePath build/Runner.xcarchive \
+            -exportPath build/ipa \
+            -exportOptionsPlist exportOptions.plist
           cd ..
 
     artifacts:
-      - ios/build/*.ipa   # The generated IPA file for Sideloadly
+      - ios/build/ipa/*.ipa
