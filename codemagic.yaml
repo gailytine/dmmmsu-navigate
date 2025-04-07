@@ -2,27 +2,18 @@ workflows:
   ios-workflow:
     name: iOS Build
     environment:
+      # Set Flutter version FIRST (top-level key)
+      flutter: "3.29.2"  # Matches Dart 3.7.2+
       groups:
-        - ios  # Contains iOS code signing credentials
+        - ios
       vars:
-        FLUTTER_VERSION: "3.29.2"  # Matches your local version
         XCODE_WORKSPACE: "ios/Runner.xcworkspace"
         XCODE_SCHEME: "Runner"
     scripts:
-      - name: Set up Flutter
+      - name: Verify Versions
         script: |
-          flutter precache --ios
-          flutter --version
-          flutter pub get
-
-      - name: Install pods
-        script: |
-          cd ios
-          pod install --repo-update
-          cd ..
-
-      - name: Build iOS
-        script: |
-          flutter build ios --release --no-codesign
-    artifacts:
-      - build/ios/ipa/*.ipa
+          flutter --version  # Should show 3.29.2
+          dart --version    # Should show 3.7.2+
+      - flutter pub get
+      - cd ios && pod install --repo-update && cd ..
+      - flutter build ios --release --no-codesign
