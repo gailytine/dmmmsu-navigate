@@ -3,64 +3,26 @@ workflows:
     name: iOS Build
     environment:
       flutter: "3.29.2"
+      xcode: latest
+      cocoapods: default
       groups:
         - ios
     scripts:
-      - name: Force Flutter Engine Download
+      - name: Pre-cache Flutter & iOS artifacts
         script: |
-          # Clean and redownload everything
-          flutter clean
-          rm -rf $FLUTTER_ROOT/bin/cache/artifacts/engine/ios
-          flutter precache --ios --force
-          
-          # Manually create Flutter.podspec if missing
-          if [ ! -f "$FLUTTER_ROOT/bin/cache/artifacts/engine/ios/Flutter.podspec" ]; then
-            cat > "$FLUTTER_ROOT/bin/cache/artifacts/engine/ios/Flutter.podspec" << 'EOL'
-          Pod::Spec.new do |s|
-            s.name             = 'Flutter'
-            s.version          = '1.0.0'
-            s.summary          = 'Flutter Engine Framework'
-            s.homepage         = 'https://flutter.dev'
-            s.license          = { :type => 'BSD' }
-            s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
-            s.source           = { :git => 'https://github.com/flutter/engine.git' }
-            s.ios.deployment_target = '11.0'
-            s.vendored_frameworks = 'Flutter.xcframework'
-          end
-          EOL
-          fi
-          
-          # Verify all files exist
-          ls -la $FLUTTER_ROOT/bin/cache/artifacts/engine/ios/
-          [ -f "$FLUTTER_ROOT/bin/cache/artifacts/engine/ios/Flutter.xcframework" ] || exit 1
+          flutter doctor
+          flutter pub get
+          flutter precache --ios
 
-      - name: Install Pods
+      - name: Install CocoaPods
         script: |
           cd ios
-          cat > Podfile << 'EOL'
-          platform :ios, '13.0'
-          use_frameworks!
-
-          target 'Runner' do
-            pod 'Flutter', :path => ENV['FLUTTER_ROOT'] + '/bin/cache/artifacts/engine/ios'
-          end
-
-          post_install do |installer|
-            installer.pods_project.targets.each do |target|
-              target.build_configurations.each do |config|
-                config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-                config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
-                config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
-              end
-            end
-          end
-          EOL
-          
-          pod install --verbose --repo-update
+          pod install --repo-update
           cd ..
 
-      - name: Build iOS
+      - name: Build iOS app
         script: |
           flutter build ios --release --no-codesign
+
     artifacts:
       - build/ios/ipa/*.ipa
