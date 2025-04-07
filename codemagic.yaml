@@ -1,75 +1,54 @@
 workflows:
   ios-sideloadly-workflow:
-    name: iOS Sideloadly Build
     environment:
       flutter: "3.29.2"
       xcode: latest
       cocoapods: default
-    instance_type: mac_mini_m1  # Faster M1 builds
-    triggering:
-      events: [push]  # Runs on every git push
-
+    instance_type: mac_mini_m1
     scripts:
-      # 1. Flutter Setup
-      - name: Setup Flutter Environment
+      - name: Force Flutter Engine Download
         script: |
-          flutter doctor -v
+          # Completely refresh Flutter cache
+          rm -rf ${FLUTTER_ROOT}/bin/cache/artifacts/engine/ios
+          flutter precache --ios --force
           flutter pub get
-          flutter precache --ios --force  # Force redownload of iOS artifacts
 
-      # 2. iOS Dependencies
-      - name: Configure iOS Project
+      - name: Verify Flutter Engine
+        script: |
+          echo "Checking Flutter engine at:"
+          ls -la ${FLUTTER_ROOT}/bin/cache/artifacts/engine/ios
+          if [ ! -f "${FLUTTER_ROOT}/bin/cache/artifacts/engine/ios/Flutter.podspec" ]; then
+            echo "ERROR: Flutter.podspec missing!"
+            flutter doctor -v
+            exit 1
+          fi
+
+      - name: Install Pods with Correct Paths
         script: |
           cd ios
-          # Ensure Podfile contains platform version
-          if ! grep -q "platform :ios" Podfile; then
-            echo -e "\nplatform :ios, '12.0'\n" >> Podfile
-          fi
+          # Ensure Podfile uses absolute path
+          FLUTTER_ABS_PATH=$(which flutter | xargs dirname | xargs dirname)
+          sed -i '' "s|flutter_application_path = '../'|flutter_application_path = '${FLUTTER_ABS_PATH}'|" Podfile
+          
+          # Clean and install pods
+          pod cache clean --all
           pod repo update
           pod install --verbose
           cd ..
 
-      # 3. Code Signing Setup
-      - name: Prepare Export Options
-        script: |
-          cd ios
-          # Create minimal ExportOptions.plist if missing
-          if [ ! -f ExportOptions.plist ]; then
-            echo '<?xml version="1.0" encoding="UTF-8"?>
-            <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-            <plist version="1.0">
-            <dict>
-                <key>method</key>
-                <string>development</string>
-            </dict>
-            </plist>' > ExportOptions.plist
-          fi
-          cd ..
-
-      # 4. Build Process
-      - name: Build and Export IPA
+      - name: Build IPA
         script: |
           flutter build ios --release --no-codesign
           cd ios
-          # Clean previous builds
-          rm -rf build/Runner.xcarchive build/ipa
-          # Archive and export
           xcodebuild archive \
             -workspace Runner.xcworkspace \
             -scheme Runner \
             -archivePath build/Runner.xcarchive \
-            -destination generic/platform=iOS \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO
-
+            CODE_SIGNING_ALLOWED=NO
           xcodebuild -exportArchive \
             -archivePath build/Runner.xcarchive \
             -exportPath build/ipa \
             -exportOptionsPlist ExportOptions.plist \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO
-          cd ..
-
+            CODE_SIGNING_ALLOWED=NO
     artifacts:
       - ios/build/ipa/*.ipa
-      - build/ios/iphoneos/Runner.app  # Alternative artifact
