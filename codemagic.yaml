@@ -1,46 +1,75 @@
 workflows:
   ios-sideloadly-workflow:
-    name: iOS Build for Sideloadly
+    name: iOS Sideloadly Build
     environment:
       flutter: "3.29.2"
       xcode: latest
       cocoapods: default
-    instance_type: mac_mini_m1
+    instance_type: mac_mini_m1  # Faster M1 builds
+    triggering:
+      events: [push]  # Runs on every git push
+
     scripts:
-      - name: Setup Flutter
+      # 1. Flutter Setup
+      - name: Setup Flutter Environment
         script: |
-          flutter precache --ios
+          flutter doctor -v
           flutter pub get
+          flutter precache --ios --force  # Force redownload of iOS artifacts
 
-      - name: Fix Flutter Engine Path
+      # 2. iOS Dependencies
+      - name: Configure iOS Project
         script: |
-          # Ensure Flutter engine is properly linked
-          flutter pub cache repair
           cd ios
-          flutter pub get
-          cd ..
-
-      - name: Install Pods
-        script: |
-          echo "Installing CocoaPods dependencies..."
-          cd ios
-          pod cache clean --all
+          # Ensure Podfile contains platform version
+          if ! grep -q "platform :ios" Podfile; then
+            echo -e "\nplatform :ios, '12.0'\n" >> Podfile
+          fi
           pod repo update
           pod install --verbose
           cd ..
 
-      - name: Build IPA
+      # 3. Code Signing Setup
+      - name: Prepare Export Options
+        script: |
+          cd ios
+          # Create minimal ExportOptions.plist if missing
+          if [ ! -f ExportOptions.plist ]; then
+            echo '<?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+            <plist version="1.0">
+            <dict>
+                <key>method</key>
+                <string>development</string>
+            </dict>
+            </plist>' > ExportOptions.plist
+          fi
+          cd ..
+
+      # 4. Build Process
+      - name: Build and Export IPA
         script: |
           flutter build ios --release --no-codesign
           cd ios
-          mkdir -p build/ipa
+          # Clean previous builds
+          rm -rf build/Runner.xcarchive build/ipa
+          # Archive and export
           xcodebuild archive \
             -workspace Runner.xcworkspace \
             -scheme Runner \
-            -archivePath build/Runner.xcarchive
+            -archivePath build/Runner.xcarchive \
+            -destination generic/platform=iOS \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO
+
           xcodebuild -exportArchive \
             -archivePath build/Runner.xcarchive \
             -exportPath build/ipa \
-            -exportOptionsPlist ExportOptions.plist
+            -exportOptionsPlist ExportOptions.plist \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO
+          cd ..
+
     artifacts:
       - ios/build/ipa/*.ipa
+      - build/ios/iphoneos/Runner.app  # Alternative artifact
