@@ -2,24 +2,58 @@ workflows:
   ios-workflow:
     name: iOS Build
     environment:
-      flutter: "3.29.2"  # Explicit version
+      flutter: "3.29.2"  # Matches your local Flutter version
       groups:
-        - ios
+        - ios  # Contains code signing credentials
+      vars:
+        XCODE_WORKSPACE: "ios/Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
     scripts:
-      - name: Precache Flutter iOS Artifacts
+      - name: Set up Flutter
         script: |
-          flutter precache --ios --android
-          ls $FLUTTER_ROOT/bin/cache/artifacts/engine/ios/  # Verify files
+          flutter precache --ios
+          flutter --version
+          flutter pub get
 
-      - name: Install Pods (Fixed)
+      - name: Install Pods
         script: |
           cd ios
-          # Use absolute path to Flutter engine
-          flutter_engine_path="$FLUTTER_ROOT/bin/cache/artifacts/engine/ios"
-          echo "pod 'Flutter', :path => '$flutter_engine_path'" >> Podfile
+          # Backup original Podfile
+          cp Podfile Podfile.backup
+          
+          # Create clean Podfile with absolute paths
+          cat > Podfile << 'EOL'
+          platform :ios, '13.0'
+          use_frameworks!
+
+          flutter_engine_path = File.join(ENV['FLUTTER_ROOT'], 'bin', 'cache', 'artifacts', 'engine', 'ios')
+
+          target 'Runner' do
+            begin
+              flutter_application_path = '../'
+              load File.join(flutter_application_path, 'ios', 'Flutter', 'podhelper.rb')
+              install_all_flutter_pods(flutter_application_path)
+            rescue LoadError
+              pod 'Flutter', :path => flutter_engine_path
+            end
+          end
+
+          post_install do |installer|
+            installer.pods_project.targets.each do |target|
+              target.build_configurations.each do |config|
+                config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+                config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+                config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+              end
+            end
+          end
+          EOL
+          
           pod install --repo-update
           cd ..
 
       - name: Build iOS
         script: |
           flutter build ios --release --no-codesign
+    artifacts:
+      - build/ios/ipa/*.ipa
