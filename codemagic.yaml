@@ -2,18 +2,24 @@ workflows:
   ios-workflow:
     name: iOS Build
     environment:
-      # Set Flutter version FIRST (top-level key)
-      flutter: "3.29.2"  # Matches Dart 3.7.2+
+      flutter: "3.29.2"  # Explicit version
       groups:
         - ios
-      vars:
-        XCODE_WORKSPACE: "ios/Runner.xcworkspace"
-        XCODE_SCHEME: "Runner"
     scripts:
-      - name: Verify Versions
+      - name: Precache Flutter iOS Artifacts
         script: |
-          flutter --version  # Should show 3.29.2
-          dart --version    # Should show 3.7.2+
-      - flutter pub get
-      - cd ios && pod install --repo-update && cd ..
-      - flutter build ios --release --no-codesign
+          flutter precache --ios --android
+          ls $FLUTTER_ROOT/bin/cache/artifacts/engine/ios/  # Verify files
+
+      - name: Install Pods (Fixed)
+        script: |
+          cd ios
+          # Use absolute path to Flutter engine
+          flutter_engine_path="$FLUTTER_ROOT/bin/cache/artifacts/engine/ios"
+          echo "pod 'Flutter', :path => '$flutter_engine_path'" >> Podfile
+          pod install --repo-update
+          cd ..
+
+      - name: Build iOS
+        script: |
+          flutter build ios --release --no-codesign
