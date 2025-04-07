@@ -7,6 +7,9 @@ workflows:
         XCODE_WORKSPACE: "ios/Runner.xcworkspace"
         XCODE_SCHEME: "Runner"
     scripts:
+      - name: Install CocoaPods
+        script: |
+          echo "CocoaPods will be automatically installed by Codemagic"
       - flutter --version
       - flutter pub get
       - cd ios && pod install --repo-update && cd ..
