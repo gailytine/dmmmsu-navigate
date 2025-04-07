@@ -5,56 +5,42 @@ workflows:
       flutter: "3.29.2"
       xcode: latest
       cocoapods: default
-      groups:
-        - ios
     instance_type: mac_mini_m1
-    triggering:
-      events: [push]
-
     scripts:
-      # 1. Flutter Setup
-      - name: Install Flutter Dependencies
+      - name: Setup Flutter
         script: |
-          flutter doctor -v
-          flutter pub get
           flutter precache --ios
+          flutter pub get
 
-      # 2. CocoaPods Setup
+      - name: Fix Flutter Engine Path
+        script: |
+          # Ensure Flutter engine is properly linked
+          flutter pub cache repair
+          cd ios
+          flutter pub get
+          cd ..
+
       - name: Install Pods
         script: |
+          echo "Installing CocoaPods dependencies..."
           cd ios
+          pod cache clean --all
           pod repo update
           pod install --verbose
           cd ..
 
-      # 3. Code Signing Configuration
-      - name: Configure Code Signing
-        script: |
-          cd ios
-          # Create exportOptions.plist if it doesn't exist
-          if [ ! -f exportOptions.plist ]; then
-            /usr/libexec/PlistBuddy -c "Add :method string development" exportOptions.plist
-          fi
-          /usr/libexec/PlistBuddy -c "Set :method development" exportOptions.plist
-          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" exportOptions.plist 2>/dev/null || true
-          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" exportOptions.plist
-          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$PRODUCT_BUNDLE_IDENTIFIER string $BUNDLE_ID" exportOptions.plist
-          cd ..
-
-      # 4. Build & Export IPA
-      - name: Build iOS IPA
+      - name: Build IPA
         script: |
           flutter build ios --release --no-codesign
           cd ios
-          # Create build directory if it doesn't exist
-          mkdir -p build
-          # Archive and export
-          xcodebuild -workspace Runner.xcworkspace -scheme Runner -archivePath build/Runner.xcarchive archive
+          mkdir -p build/ipa
+          xcodebuild archive \
+            -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -archivePath build/Runner.xcarchive
           xcodebuild -exportArchive \
             -archivePath build/Runner.xcarchive \
             -exportPath build/ipa \
-            -exportOptionsPlist exportOptions.plist
-          cd ..
-
+            -exportOptionsPlist ExportOptions.plist
     artifacts:
       - ios/build/ipa/*.ipa
