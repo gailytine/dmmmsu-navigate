@@ -1,28 +1,50 @@
 workflows:
-  ios-workflow:
-    name: iOS Build
+  ios-sideloadly-workflow:
+    name: iOS Build for Sideloadly
     environment:
-      flutter: "3.29.2"
-      xcode: latest
-      cocoapods: default
+      flutter: "3.29.2"  # Your Flutter version
+      xcode: latest       # Latest Xcode (recommended)
+      cocoapods: default  # Default CocoaPods version
       groups:
-        - ios
+        - ios             # Required for iOS builds
+    instance_type: mac_mini_m1  # Faster builds on M1 Macs
+    triggering:
+      events: [push]      # Run on every push (adjust as needed)
+
     scripts:
-      - name: Pre-cache Flutter & iOS artifacts
+      # 1. Flutter Setup
+      - name: Install Flutter Dependencies
         script: |
-          flutter doctor
+          flutter doctor -v
           flutter pub get
           flutter precache --ios
 
-      - name: Install CocoaPods
+      # 2. CocoaPods Setup (iOS Dependencies)
+      - name: Install Pods
         script: |
           cd ios
-          pod install --repo-update
+          pod repo update
+          pod install --verbose
           cd ..
 
-      - name: Build iOS app
+      # 3. Automatic Code Signing (for development profile)
+      - name: Set Up Automatic Signing
         script: |
-          flutter build ios --release --no-codesign
+          cd ios
+          /usr/libexec/PlistBuddy -c "Set :method development" exportOptions.plist
+          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles" exportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" exportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$PRODUCT_BUNDLE_IDENTIFIER string $BUNDLE_ID" exportOptions.plist
+          cd ..
+
+      # 4. Build & Export IPA
+      - name: Build iOS IPA
+        script: |
+          flutter build ios --release --no-codesign  # Build without signing (Xcode will handle it)
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace -scheme Runner -archivePath RunnerArchive.xcarchive archive
+          xcodebuild -exportArchive -archivePath RunnerArchive.xcarchive -exportPath ./build -exportOptionsPlist exportOptions.plist
+          cd ..
 
     artifacts:
-      - build/ios/ipa/*.ipa
+      - ios/build/*.ipa   # The generated IPA file for Sideloadly
