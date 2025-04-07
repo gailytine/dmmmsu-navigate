@@ -1,17 +1,17 @@
 ﻿platform :ios, '13.0'
 use_frameworks!
 
-# Add this at the TOP of your Podfile
+# Add this at the TOP
 flutter_engine_path = File.join(ENV['FLUTTER_ROOT'], 'bin', 'cache', 'artifacts', 'engine', 'ios')
 
 target 'Runner' do
-  # Primary method (standard Flutter)
+  # Primary method (try standard Flutter integration first)
   begin
     flutter_application_path = '../'
     load File.join(flutter_application_path, 'ios', 'Flutter', 'podhelper.rb')
     install_all_flutter_pods(flutter_application_path)
-  rescue
-    # Fallback (direct engine reference)
+  rescue LoadError
+    # Fallback method (direct engine reference)
     pod 'Flutter', :path => flutter_engine_path
   end
 end
