@@ -2,10 +2,12 @@ workflows:
   ios-workflow:
     name: iOS Build
     environment:
+      flutter: "3.29.2"
       vars:
         XCODE_WORKSPACE: "ios/Runner.xcworkspace"
         XCODE_SCHEME: "Runner"
     scripts:
+      - flutter --version
       - flutter pub get
       - cd ios && pod install --repo-update && cd ..
       - flutter build ios --release --no-codesign
